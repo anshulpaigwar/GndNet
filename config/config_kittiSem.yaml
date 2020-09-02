@@ -1,0 +1,31 @@
+data_dir: '/home/anshul/es3cap/dataset/kitti_sem_gnd_v2/'
+# data_dir: '/home/anshul/es3cap/dataset/kitti_gnd_dataset_v2/'
+shift_cloud: true
+lidar_height: 1.733
+num_points: 100000
+grid_range: [-50, -50, 50, 50] 
+
+# voxel_generator:
+# pc_range: [-49.4, -50, -4, 50.6, 50, 4] # cmcdot grid origin is at base_link not the velodyne so have to crop points from 0.6
+pc_range: [-47, -50, -4, 53, 50, 4] # cmcdot grid origin is at base_link not the velodyne so have to shift cropping points
+voxel_size : [1, 1, 8]
+max_points_voxel : 100
+max_voxels: 10000
+input_features: 4
+
+# model_param
+batch_size: 2
+lr: 0.01
+momentum: 0.9
+weight_decay: 0.0005
+epochs: 120
+use_norm: false
+clip: 0.25 # gradient clipping
+
+# Voxel Feature Extractor
+vfe_filters: [64] # only one filter for now
+with_distance: false
+
+# loss_param
+alpha: 0.9 # per cell loss
+beta: 0.1 # Smoothness loss

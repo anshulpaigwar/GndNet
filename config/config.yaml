@@ -1,0 +1,24 @@
+data_dir: '/home/anshul/es3cap/dataset/kitti_gnd_dataset/'
+shift_cloud: false
+
+grid_range: [0, -30, 60, 30] 
+
+# voxel_generator:
+pc_range: [0.6, -30, -1, 60.6, 30, 3] # cmcdot grid origin is at base_link not the velodyne so have to crop points from 0.6
+voxel_size : [1, 1, 4]
+max_points_voxel : 100
+max_voxels: 3600
+input_features: 4
+
+# model_param:
+batch_size: 2
+lr: 0.001
+momentum: 0.9
+weight_decay: 0.0005
+epochs: 120
+use_norm: false
+clip: 0.25 # gradient clipping
+
+# Voxel Feature Extractor
+vfe_filters: [64] # only one filter for now
+with_distance: false
