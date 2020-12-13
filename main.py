@@ -26,7 +26,6 @@ from model import GroundEstimatorNet
 from modules.loss_func import MaskedHuberLoss,SpatialSmoothLoss
 from dataset_utils.dataset_provider import get_train_loader, get_valid_loader
 from utils.point_cloud_ops import points_to_voxel
-from utils.utils import save_checkpoint, AverageMeter
 import ipdb as pdb
 
 use_cuda = torch.cuda.is_available()
@@ -275,6 +274,35 @@ def main():
                 'optimizer' : optimizer.state_dict(),
             }, is_best)
 
+
+
+
+'''
+Save the model for later
+'''
+def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
+    torch.save(state, filename)
+    if is_best:
+        shutil.copyfile(filename, 'model_best.pth.tar')
+
+
+
+class AverageMeter(object):
+    """Computes and stores the average and current value"""
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.val = 0
+        self.avg = 0
+        self.sum = 0
+        self.count = 0
+
+    def update(self, val, n=1):
+        self.val = val
+        self.sum += val * n
+        self.count += n
+        self.avg = self.sum / self.count
 
 
 if __name__ == '__main__':

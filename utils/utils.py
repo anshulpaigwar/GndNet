@@ -19,7 +19,7 @@ import time
 import yaml
 import torch
 from torchvision import datasets, transforms
-from utils.point_cloud_ops_test import points_to_voxel
+# from utils.point_cloud_ops_test import points_to_voxel
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -41,59 +41,10 @@ import numba
 from numba import jit,types
 
 
-def get_paddings_indicator(actual_num, max_num, axis=0):
-    """Create boolean mask by actually number of a padded tensor.
-
-    Args:
-        actual_num ([type]): [description]
-        max_num ([type]): [description]
-
-    Returns:
-        [type]: [description]
-    """
-
-    actual_num = torch.unsqueeze(actual_num, axis + 1)
-    # tiled_actual_num: [N, M, 1]
-    max_num_shape = [1] * len(actual_num.shape)
-    max_num_shape[axis + 1] = -1
-    max_num = torch.arange(
-        max_num, dtype=torch.int, device=actual_num.device).view(max_num_shape)
-    # tiled_actual_num: [[3,3,3,3,3], [4,4,4,4,4], [2,2,2,2,2]]
-    # tiled_max_num: [[0,1,2,3,4], [0,1,2,3,4], [0,1,2,3,4]]
-    paddings_indicator = actual_num.int() > max_num
-    # paddings_indicator shape: [batch_size, max_num]
-    return paddings_indicator
 
 
 
 
-
-'''
-Save the model for later
-'''
-def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
-    torch.save(state, filename)
-    if is_best:
-        shutil.copyfile(filename, 'model_best.pth.tar')
-
-
-
-class AverageMeter(object):
-    """Computes and stores the average and current value"""
-    def __init__(self):
-        self.reset()
-
-    def reset(self):
-        self.val = 0
-        self.avg = 0
-        self.sum = 0
-        self.count = 0
-
-    def update(self, val, n=1):
-        self.val = val
-        self.sum += val * n
-        self.count += n
-        self.avg = self.sum / self.count
 
 
 
@@ -280,15 +231,15 @@ def visualize_gnd_3D(gnd_label , fig, cfg):
 
 
 
-def visualize_2D(gnd_label, points ,fig, cfg):
-    fig.clf()
-    fig.add_subplot(1, 2, 1)
-    plt.imshow(gnd_label, interpolation='nearest')
-    pc_img = points_to_voxel(points, cfg.voxel_size, cfg.pc_range, cfg.max_points_voxel, True, cfg.max_voxels)
-    fig.add_subplot(1, 2, 2)
-    plt.imshow(pc_img[0], interpolation='nearest')
-    plt.show()
-    plt.pause(0.01)
+# def visualize_2D(gnd_label, points ,fig, cfg):
+#     fig.clf()
+#     fig.add_subplot(1, 2, 1)
+#     plt.imshow(gnd_label, interpolation='nearest')
+#     pc_img = points_to_voxel(points, cfg.voxel_size, cfg.pc_range, cfg.max_points_voxel, True, cfg.max_voxels)
+#     fig.add_subplot(1, 2, 2)
+#     plt.imshow(pc_img[0], interpolation='nearest')
+#     plt.show()
+#     plt.pause(0.01)
 
 
 

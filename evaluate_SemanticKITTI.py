@@ -255,7 +255,7 @@ def main():
     else:
         raise Exception('please specify checkpoint to load')
 
-    data_dir = "/home/anshul/es3cap/dataset/kitti_semantic/dataset/sequences/07/"
+    data_dir = "/home/anshul/es3cap/semkitti_gndnet/kitti_semantic/dataset/sequences/07/"
     evaluate_SemanticKITTI(data_dir)
 
 

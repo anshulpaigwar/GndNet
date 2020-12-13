@@ -192,7 +192,7 @@ class listener(object):
 		# print("label_process: ", label_time- start_time)
 		# print("cloud_process: ", cloud_time- label_time)
 
-		# recorder(cloud, gnd_label, self.count)
+		recorder(cloud, gnd_label, self.count)
 		end_time = time.time()
 		print("total_process: ", end_time- start_time, self.count)
 		self.count += 1

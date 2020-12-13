@@ -39,163 +39,6 @@ plt.ion()
 
 
 
-# # resolution of ground estimator grid is 1m x 1m 
-# visualize = False
-# pc_range = [0.6, -30, 60.6, 30]
-# grid_size = [0, -30, 60, 30]
-grid_size = [-50, -50, 50, 50]
-length = int(grid_size[2] - grid_size[0]) # x direction
-width = int(grid_size[3] - grid_size[1])    # y direction
-# lidar_height = 1.732
-# out_dir = '/home/anshul/es3cap/dataset/kitti_gnd_dataset/training/seq_039'
-
-
-
-
-
-def np2ros_pub(points, pcl_pub, timestamp = None):
-    npoints = points.shape[0] # Num of points in PointCloud
-    points_arr = np.zeros((npoints,), dtype=[
-                                        ('x', np.float32),
-                                        ('y', np.float32),
-                                        ('z', np.float32),
-                                        ('intensity', np.float32)])
-    points = np.transpose(points)
-    points_arr['x'] = points[0]
-    points_arr['y'] = points[1]
-    points_arr['z'] = points[2]
-    points_arr['intensity'] = points[3]
-    # points_arr['g'] = 255
-    # points_arr['b'] = 255
-
-    if timestamp == None:
-        timestamp = rospy.Time.now()
-    cloud_msg = ros_numpy.msgify(PointCloud2, points_arr,stamp =timestamp, frame_id = "/kitti/velo_link")
-    # rospy.loginfo("happily publishing sample pointcloud.. !")
-    pcl_pub.publish(cloud_msg)
-
-
-
-
-# def np2ros_pub_2(points, pcl_pub, timestamp, color):
-#     npoints = points.shape[0] # Num of points in PointCloud
-#     points_arr = np.zeros((npoints,), dtype=[
-#                                         ('x', np.float32),
-#                                         ('y', np.float32),
-#                                         ('z', np.float32),
-#                                         ('r', np.uint8),
-#                                         ('g', np.uint8),
-#                                         ('b', np.uint8)])
-#     points = np.transpose(points)
-#     points_arr['x'] = points[0]
-#     points_arr['y'] = points[1]
-#     points_arr['z'] = points[2]
-#     points_arr['r'] = color[0] * 255
-#     points_arr['g'] = color[1] * 255
-#     points_arr['b'] = color[2] * 255
-
-#     if timestamp == None:
-#         timestamp = rospy.Time.now()
-#     cloud_msg = ros_numpy.msgify(PointCloud2, points_arr,stamp =timestamp, frame_id = "/kitti/base_link")
-#     # rospy.loginfo("happily publishing sample pointcloud.. !")
-#     pcl_pub.publish(cloud_msg)
-#     # rospy.sleep(0.1)
-
-def np2ros_pub_2(points, pcl_pub, timestamp, color):
-    npoints = points.shape[0] # Num of points in PointCloud
-    points_arr = np.zeros((npoints,), dtype=[
-                                        ('x', np.float32),
-                                        ('y', np.float32),
-                                        ('z', np.float32),
-                                        ('intensity', np.float32)])
-    points = np.transpose(points)
-    points_arr['x'] = points[0]
-    points_arr['y'] = points[1]
-    points_arr['z'] = points[2]
-    points_arr['intensity'] = color[0]
-    # points_arr['g'] = 255
-    # points_arr['b'] = 255
-
-    if timestamp == None:
-        timestamp = rospy.Time.now()
-    cloud_msg = ros_numpy.msgify(PointCloud2, points_arr,stamp =timestamp, frame_id = "/kitti/velo_link")
-    # rospy.loginfo("happily publishing sample pointcloud.. !")
-    pcl_pub.publish(cloud_msg)
-
-
-def gnd_marker_pub(gnd_label, marker_pub):
-    gnd_marker = Marker()
-    gnd_marker.header.frame_id = "/kitti/base_link"
-    gnd_marker.header.stamp = rospy.Time.now()
-    gnd_marker.type = gnd_marker.LINE_LIST
-    gnd_marker.action = gnd_marker.ADD
-    gnd_marker.scale.x = 0.05
-    gnd_marker.scale.y = 0.05
-    gnd_marker.scale.z = 0.05
-    gnd_marker.color.a = 1.0
-    gnd_marker.color.r = 0.0
-    gnd_marker.color.g = 1.0
-    gnd_marker.color.b = 0.0
-    gnd_marker.points = []
-
-# gnd_labels are arranged in reverse order
-    for j in range(gnd_label.shape[0]):
-        for i in range(gnd_label.shape[1]):
-            pt1 = Point()
-            pt1.x = i + grid_size[0]
-            pt1.y = j + grid_size[1]
-            pt1.z = gnd_label[j,i]
-
-            if j>0 :
-                pt2 = Point()
-                pt2.x = i + grid_size[0]
-                pt2.y = j-1 +grid_size[1]
-                pt2.z = gnd_label[j-1, i]
-                gnd_marker.points.append(pt1)
-                gnd_marker.points.append(pt2)
-
-            if i>0 :
-                pt2 = Point()
-                pt2.x = i -1 + grid_size[0]
-                pt2.y = j + grid_size[1]
-                pt2.z = gnd_label[j, i-1]
-                gnd_marker.points.append(pt1)
-                gnd_marker.points.append(pt2)
-
-            if j < width-1 :
-                pt2 = Point()
-                pt2.x = i + grid_size[0]
-                pt2.y = j + 1 + grid_size[1]
-                pt2.z = gnd_label[j+1, i]
-                gnd_marker.points.append(pt1)
-                gnd_marker.points.append(pt2)
-
-            if i < length-1 :
-                pt2 = Point()
-                pt2.x = i + 1 + grid_size[0]
-                pt2.y = j + grid_size[1]
-                pt2.z = gnd_label[j, i+1]
-                gnd_marker.points.append(pt1)
-                gnd_marker.points.append(pt2)
-
-    marker_pub.publish(gnd_marker)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def parse_calibration(filename):
   """ read calibration file with given filename
       Returns
@@ -284,55 +127,6 @@ def segment_cloud(cloud, gnd_labels):
     return gnd, obs
 
 
-@jit(nopython=True)
-def lidar_to_img(points, grid_size, voxel_size, fill):
-    # pdb.set_trace()
-    lidar_data = points[:, :2] # neglecting the z co-ordinate
-    height_data = points[:, 2] + 1.732
-    # pdb.set_trace()
-    lidar_data -= np.array([grid_size[0], grid_size[1]])
-    lidar_data = lidar_data /voxel_size # multiplying by the resolution
-    lidar_data = np.floor(lidar_data)
-    lidar_data = lidar_data.astype(np.int32)
-    # lidar_data = np.reshape(lidar_data, (-1, 2))
-    voxelmap_shape = (grid_size[2:]-grid_size[:2])/voxel_size
-    lidar_img = np.zeros((int(voxelmap_shape[0]),int(voxelmap_shape[1])))
-    N = lidar_data.shape[0]
-    for i in range(N):
-        if(height_data[i] < 10):
-            if (0 < lidar_data[i,0] < lidar_img.shape[0]) and (0 < lidar_data[i,1] < lidar_img.shape[1]):
-                lidar_img[lidar_data[i,0],lidar_data[i,1]] = fill
-    return lidar_img
-
-
-
-
-@jit(nopython=True)
-def lidar_to_heightmap(points, grid_size, voxel_size, max_points):
-    lidar_data = points[:, :2] # neglecting the z co-ordinate
-    height_data = points[:, 2] + 1.732
-    # pdb.set_trace()
-    lidar_data -= np.array([grid_size[0], grid_size[1]])
-    lidar_data = lidar_data /voxel_size # multiplying by the resolution
-    lidar_data = np.floor(lidar_data)
-    lidar_data = lidar_data.astype(np.int32)
-    # lidar_data = np.reshape(lidar_data, (-1, 2))
-    heightmap_shape = (grid_size[2:]-grid_size[:2])/voxel_size
-    heightmap = np.zeros((int(heightmap_shape[0]),int(heightmap_shape[1]), max_points))
-    num_points = np.ones((int(heightmap_shape[0]),int(heightmap_shape[1])), dtype = np.int32) # num of points in each cell # np.ones just to avoid division by zero
-    N = lidar_data.shape[0] # Total number of points
-    for i in range(N):
-        x = lidar_data[i,0]
-        y = lidar_data[i,1]
-        z = height_data[i]
-        if(z < 10):
-            if (0 < x < heightmap.shape[0]) and (0 < y < heightmap.shape[1]):
-                k = num_points[x,y] # current num of points in a cell
-                if k-1 <= max_points:
-                    heightmap[x,y,k-1] = z
-                    num_points[x,y] += 1
-    return heightmap.sum(axis = 2)/num_points
-
 
 
 
@@ -348,97 +142,7 @@ def rotate_cloud(cloud, theta):
 
 
 
-
-@jit(nopython=True)
-def semantically_segment_cloud(points, grid_size, voxel_size, elevation_map, threshold = 0.2):
-    lidar_data = points[:, :2] # neglecting the z co-ordinate
-    height_data = points[:, 2] + 1.732
-    rgb = np.zeros((points.shape[0],3))
-    # pdb.set_trace()
-    lidar_data -= np.array([grid_size[0], grid_size[1]])
-    lidar_data = lidar_data /voxel_size # multiplying by the resolution
-    lidar_data = np.floor(lidar_data)
-    lidar_data = lidar_data.astype(np.int32)
-    N = lidar_data.shape[0] # Total number of points
-    for i in range(N):
-        x = lidar_data[i,0]
-        y = lidar_data[i,1]
-        z = height_data[i]
-        if (0 < x < elevation_map.shape[0]) and (0 < y < elevation_map.shape[1]):
-            if z > elevation_map[x,y] + threshold:
-                rgb[i,0] = 1
-                # rgb[i,1] = 1
-            else:
-                rgb[i,0] = 0
-        else:
-            rgb[i,0] = -1
-    return rgb
-
-
-
-
-fig = plt.figure()
-def process_cloud(cloud):
-    # start = time.time()
-    # remove all non ground points; gnd labels = [40, 44, 48, 49]
-    # gnd, obs = segment_cloud(cloud,[40, 44, 48, 49])
-    gnd, obs = segment_cloud(cloud,[40, 44, 48, 49,60,72])
-    visualize = True
-
-    if visualize:
-        fig.clear()
-        voxel_size = 1
-        grid_size = np.array([-50, -50, 50, 50])
-        gnd_img = lidar_to_img(np.copy(gnd), grid_size, voxel_size, fill = 1)
-        gnd_heightmap = lidar_to_heightmap(np.copy(gnd), grid_size, voxel_size, max_points = 100)
-
-        fig.add_subplot(2, 3, 1)
-        plt.imshow(gnd_img, interpolation='nearest')
-        kernel = np.ones((5,5),np.uint8)
-        gnd_img_dil = cv2.dilate(gnd_img,kernel,iterations = 2)
-        fig.add_subplot(2, 3, 2)
-        plt.imshow(gnd_img_dil, interpolation='nearest')
-        mask = gnd_img_dil - gnd_img
-        fig.add_subplot(2, 3, 3)
-        plt.imshow(mask, interpolation='nearest')
-        # mask = mask.clip(min=0)
-        fig.add_subplot(2, 3, 4)
-        cs = plt.imshow(gnd_heightmap, interpolation='nearest')
-        cbar = fig.colorbar(cs)
-
-        image_result = inpaint.inpaint_biharmonic(gnd_heightmap, mask)
-        fig.add_subplot(2, 3, 5)
-        cs = plt.imshow(image_result, interpolation='nearest')
-        cbar = fig.colorbar(cs)
-
-        image_result = signal.convolve2d(image_result, kernel, boundary='wrap', mode='same')/kernel.sum()
-        # image_result = inpaint.inpaint_biharmonic(image_result, mask)
-        # image_result = cv2.dilate(image_result,kernel,iterations = 1)
-
-        # kernel = np.array([[0,1,0],
-        #                    [1,0,1],
-        #                    [0,1,0]])
-        # kernel = np.ones((7,7),np.uint8)
-        # kernel[3,3] = 0
-        # ind = mask == 1
-
-        # for i in range(10):
-        #     conv_out = signal.convolve2d(gnd_heightmap, kernel, boundary='wrap', mode='same')/kernel.sum()
-        #     gnd_heightmap[ind] = conv_out[ind]
-
-        fig.add_subplot(2, 3, 6)
-        cs = plt.imshow(image_result, interpolation='nearest')
-        cbar = fig.colorbar(cs)
-        plt.show()
-        # cbar.remove()
-
-        seg = semantically_segment_cloud(cloud.copy(), grid_size, voxel_size, image_result)
-
-    return gnd, image_result.T, seg
-    # return gnd
-
-
-def kitti_semantic_data_generate(data_dir):
+def parse_semanticKitti(data_dir):
     rospy.init_node('gnd_data_provider', anonymous=True)
     pcl_pub = rospy.Publisher("/kitti/velo/pointcloud", PointCloud2, queue_size=10)
     pcl_pub2 = rospy.Publisher("/kitti/raw/pointcloud", PointCloud2, queue_size=10)
@@ -473,26 +177,21 @@ def kitti_semantic_data_generate(data_dir):
             angle +=0.1
         else:
             angle -=0.1
-        
-        # print(angle)
 
 
         points  = rotate_cloud(points, theta = [0,5,angle]) #zyx
 
-        cloud, gnd_label, seg = process_cloud(points)
-        # cloud = process_cloud(points)
+        gnd_points, obs_points = segment_cloud(cloud,[40, 44, 48, 49,60,72])
 
         # points += np.array([0,0,1.732,0,0], dtype=np.float32)
         # points[0,2] += 1.732
         
         timestamp = rospy.Time.now()
         broadcast_TF(poses[f],timestamp)
-        np2ros_pub(cloud,pcl_pub,timestamp)
-        np2ros_pub_2(points, pcl_pub2,timestamp, seg.T)
-        # gnd_marker_pub(gnd_label,marker_pub)
-        # print(points.shape)
-        pdb.set_trace()
-        # rate.sleep()
+        np2ros_pub(gnd_points, pcl_pub, timestamp)
+        np2ros_pub(points, pcl_pub2,timestamp)
+        
+        rate.sleep()
 
 
 
@@ -500,7 +199,7 @@ def kitti_semantic_data_generate(data_dir):
 if __name__ == '__main__':
     data_dir = "/home/anshul/es3cap/dataset/kitti_semantic/dataset/sequences/06/"
 
-    kitti_semantic_data_generate(data_dir)
+    parse_semanticKitti(data_dir)
 
 
 
