@@ -1,14 +1,11 @@
 # GndNet: Fast Ground plane Estimation and Point Cloud Segmentation for Autonomous Vehicles.
----
 Authors: Anshul Paigwar, Ozgur Erkent, David Sierra Gonzalez, Christian Laugier
 
-Teaser Img
+<img src="https://github.com/anshulpaigwar/GndNet/blob/master/doc/GndNet_Teaser.png" alt="drawing" width="400"/>
 
 ## Introduction
 
-This repository is code release for our paper accepted in International conference on Robotic Systems,IROS 2020. [presentation](https://sites.google.com/view/wad2019/overview).
-In this work, we study 3D object detection directly from point clouds obtained
-from 3D LiDARS.
+This repository is code release for our GndNet paper accepted in International conference on Robotic Systems, IROS 2020.
 
 ## Abstract
 
@@ -37,59 +34,14 @@ ros_numpy
 ```
 ## Data Preparation
 
-* We train our model on agumented SematicKITTI dataset [link](http://www.semantic-kitti.org/).
-* We subdivide object classes in SematicKITTI dataset in two categories 
-	1. Ground(road, sidewalk, parking, other-ground, vegetation, terrain)
-	2. Non ground(all other)
-* To prepare our ground elevation dataset we take only ground points and use CRF-based surface fitting method described in [1].
-* Ground labels are generated in a form of 2D grid with cell resolution 1m x 1m. Values of each cell represent the local elevation of ground.
-* We store ground labels and raw point cloud (both ground and non ground points) to train our network.
-* We provide a sample dataset in this repository, full dataset can be made available on request.
-
-<!-- Data augumentation Img
-
-Download the KITTI 3D object detection dataset from [link](http://www.cvlibs.net/datasets/kitti/eval_object.php?obj_benchmark=3d).
-  Your data directory should look like:
-```
-|--data_object_velodyne
-    |--training
-        |--calib
-        |--label_2
-        |--velodyne
-```
-To generate the augumented dataset for the training and validation of Attentional PointNet
- use the code in folder kitti_custom:
-
- ```
- python kitti_lidarImg_data_generator.py
- ```
-It will generate the dataset in following format:
-```
-|--attentional_pointnet_data
-    |--validation
-    |--training
-        |--heightmap_crop
-            |--0000.png
-            |--
-        |--labels
-            |--0000.txt
-            |--
-        |--velodyne_crop
-            |--0000.npy
-            |--
-```
-Form each cropped region of 12m x 12m we have point cloud data, heightmap and a label file.
- Each label file contains three instances. These instances could be a car or non-car.
- depending upon number of cars in the scene. Instances are defined as
-
-```
-Float x,y,z
-Float theta
-Int theta_binned
-Float H, W, L
-Bool category car/ non-car
-```
-For non-car category we keep a fixed x,y,z which is outside of 12m x 12m region. -->
+* We train our model on augmented SematicKITTI dataset [link](http://www.semantic-kitti.org/).
+* We subdivide object classes in SematicKITTI dataset into two categories 
+	1. Ground (road, sidewalk, parking, other-ground, vegetation, terrain)
+	2. Non-ground (all other)
+* To prepare our ground elevation dataset we take only ground points and use the CRF-based surface fitting method described in [1].
+* Ground labels are generated in a 2D grid representation with cell resolution 1m x 1m and of size (x, y) = [(-50, -50), (50, 50)]. Values of each cell represent the local ground elevation.
+* We store ground labels and raw point clouds (both ground and non-ground points) to train our network.
+* We provide a sample dataset in this repository, the full dataset can be made available on request.
 
 ## Training
 
@@ -97,28 +49,31 @@ To train the model update the data directory path in the config file: config_kit
 ```
 python main.py -s
 ```
- It take around 6 hours for the network to converge and model parameters would be stored
- in checkpoint.pth.tar file. A pretrained model is provided in trained_models folder it can be used to 
- evaluate a sequence in SemanticKITTI dataset.
+ It takes around 6 hours for the network to converge and model parameters would be stored in checkpoint.pth.tar file. A pre-trained model is provided in the trained_models folder it can be used to evaluate a sequence in the SemanticKITTI dataset.
 
 ```
 python evaluate_SemanticKITTI.py --resume checkpoint.pth.tar --data_dir /home/.../kitti_semantic/dataset/sequences/07/
 ```
 
 ## Using pre-trained model
-Download SemanticKITTI dataset from their website [link](http://www.semantic-kitti.org/). To visualize the output we use ROS and rviz. The predicted class (ground or non-ground) of the points in the point cloud is substituted in the intensity field of sensor_msgs.pointcloud. In the rviz use intensity as color transformer to visualize segmented pointcloud. For the visualisation of Ground elevation we use ros line marker. 
+Download the SemanticKITTI dataset from their website [link](http://www.semantic-kitti.org/). To visualize the output we use ROS and rviz. The predicted class (ground or non-ground) of the points in the point cloud is substituted in the intensity field of sensor_msgs.pointcloud. In the rviz use intensity as a color transformer to visualize segmented pointcloud. For the visualization of ground elevation, we use the ROS line marker. 
 
 ```
 roscore
 rviz
 python evaluate_SemanticKITTI.py --resume trained_models/checkpoint.pth.tar -v -gnd --data_dir /home/.../SemanticKITTI/dataset/sequences/00/
 ```
-Note: The current version of the code for visualisation is written in python which can be very slow specifically generation of ros marker.
+Note: The current version of the code for visualization is written in python which can be very slow specifically the generation of ROS marker.
 To only visualize segmentation output without ground elevation remove the `-gnd` flag.
 
 ## Results
 
+Sematic segmentation of point cloud ground (green) and non-ground (purple):
 
+<img src="https://github.com/anshulpaigwar/GndNet/blob/master/doc/segmntation_results.png" alt="drawing" width="800"/>
+
+Ground elevation estimation:
+<img src="https://github.com/anshulpaigwar/GndNet/blob/master/doc/ground_estimation.png" alt="drawing" width="800"/>
 
 ## TODO
 * Current dataloader loads the entire dataset in to the RAM first, this reduces training time but can be hogging for system with low RAM.
@@ -128,7 +83,7 @@ To only visualize segmentation output without ground elevation remove the `-gnd`
 
 ## Citation
 
-If you find this project useful in your research, please consider cite:
+If you find this project useful in your research, please consider citing our work:
 ```
 @inproceedings{paigwar2020gndnet,
   title={GndNet: Fast Ground Plane Estimation and Point Cloud Segmentation for Autonomous Vehicles},
@@ -140,11 +95,11 @@ If you find this project useful in your research, please consider cite:
 
 ## Contribution
 
-We Welcome you in contributing to this repo, and feel free to contact us for any potential bugs and issues.
+We welcome you for contributing to this repo, and feel free to contact us for any potential bugs and issues.
 
 
 ## References
----
+
 [1] L. Rummelhard, A. Paigwar, A. Nègre and C. Laugier, "Ground estimation and point cloud segmentation using SpatioTemporal Conditional Random Field," 2017 IEEE Intelligent Vehicles Symposium (IV), Los Angeles, CA, 2017, pp. 1105-1110, doi: 10.1109/IVS.2017.7995861.
 
 [2] Behley, J., Garbade, M., Milioto, A., Quenzel, J., Behnke, S., Stachniss, C., & Gall, J. (2019). SemanticKITTI: A dataset for semantic scene understanding of lidar sequences. In Proceedings of the IEEE International Conference on Computer Vision (pp. 9297-9307).
