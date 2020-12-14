@@ -9,18 +9,10 @@ from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.sampler import SubsetRandomSampler
 import yaml
 
-# Ros Includes
-import rospy
-from sensor_msgs.msg import PointCloud2
-import std_msgs.msg
-from visualization_msgs.msg import Marker
-import ros_numpy
-
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import ipdb as pdb
 
-from utils.utils import np2ros_pub, gnd_marker_pub
 
 
 
@@ -194,7 +186,16 @@ if __name__ == '__main__':
 			self.__dict__.update(entries)
 
 	cfg = ConfigClass(**config_dict) # convert python dict to class for ease of use
+	
 
+	# Ros Includes
+	import rospy
+	from sensor_msgs.msg import PointCloud2
+	import std_msgs.msg
+	from visualization_msgs.msg import Marker
+	import ros_numpy
+	from utils.ros_utils import np2ros_pub, gnd_marker_pub
+	
 	rospy.init_node('gnd_data_provider', anonymous=True)
 	pcl_pub = rospy.Publisher("/kitti/reduced_velo", PointCloud2, queue_size=10)
 	marker_pub = rospy.Publisher("/kitti/gnd_marker", Marker, queue_size=10)
@@ -216,19 +217,4 @@ if __name__ == '__main__':
 			gnd_marker_pub(labels[i].numpy(),marker_pub, cfg, color = "red")
 			# # visualize_gnd_3D(gnd_label, fig)
 			# visualize_2D(labels[i],data[i],fig)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

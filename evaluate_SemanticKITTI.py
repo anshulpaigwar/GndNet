@@ -25,14 +25,11 @@ import numpy as np
 from model import GroundEstimatorNet
 from modules.loss_func import MaskedHuberLoss
 from dataset_utils.dataset_provider import get_train_loader, get_valid_loader
+from utils.utils import lidar_to_img, lidar_to_heightmap, segment_cloud
 from utils.point_cloud_ops import points_to_voxel
-from utils.utils import np2ros_pub_2, gnd_marker_pub, segment_cloud, lidar_to_img, lidar_to_heightmap
 import ipdb as pdb
 import matplotlib.pyplot as plt
-# Ros Includes
-import rospy
-from sensor_msgs.msg import PointCloud2
-from visualization_msgs.msg import Marker
+
 import numba
 from numba import jit,types
 
@@ -45,26 +42,19 @@ if use_cuda:
 
 
 
-rospy.init_node('gnd_data_provider', anonymous=True)
-pcl_pub = rospy.Publisher("/kitti/velo/pointcloud", PointCloud2, queue_size=10)
-# marker_pub_1 = rospy.Publisher("/kitti/ground_marker", Marker, queue_size=10)
-marker_pub_2 = rospy.Publisher("/kitti/gnd_marker_pred", Marker, queue_size=10)
 
-# rospy.init_node('gnd_data_provider', anonymous=True)
-# pcl_pub = rospy.Publisher("/kitti/velo/pointcloud", PointCloud2, queue_size=10)
-# pcl_pub2 = rospy.Publisher("/kitti/raw/pointcloud", PointCloud2, queue_size=10)
-# marker_pub = rospy.Publisher("/kitti/ground_marker", Marker, queue_size=10)
 
 #############################################xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx#######################################
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--print-freq', '-p', default=100, type=int, metavar='N', help='print frequency (default: 50)')
+
 parser.add_argument('--resume', default='', type=str, metavar='PATH', help='path to latest checkpoint (default: none)')
 parser.add_argument('--config', default='config/config_kittiSem.yaml', type=str, metavar='PATH', help='path to config file (default: none)')
 parser.add_argument('-v', '--visualize', dest='visualize', action='store_true', help='visualize model on validation set')
-parser.add_argument('-s', '--save_checkpoints', dest='save_checkpoints', action='store_true',help='evaluate model on validation set')
-parser.add_argument('--start_epoch', default=0, type=int, help='epoch number to start from')
+parser.add_argument('-gnd', '--visualize_gnd', dest='visualize_gnd', action='store_true', help='visualize ground elevation')
+parser.add_argument('--data_dir', default="/home/anshul/es3cap/semkitti_gndnet/kitti_semantic/dataset/sequences/07/", 
+                        type=str, metavar='PATH', help='path to config file (default: none)')
 args = parser.parse_args()
 
 
@@ -84,6 +74,24 @@ else:
 
 print("setting batch_size to 1")
 cfg.batch_size = 1
+
+
+if args.visualize:
+
+    # Ros Includes
+    import rospy
+    from utils.ros_utils import np2ros_pub_2, gnd_marker_pub
+    from sensor_msgs.msg import PointCloud2
+    from visualization_msgs.msg import Marker
+
+    rospy.init_node('gnd_data_provider', anonymous=True)
+    pcl_pub = rospy.Publisher("/kitti/velo/pointcloud", PointCloud2, queue_size=10)
+    marker_pub_2 = rospy.Publisher("/kitti/gnd_marker_pred", Marker, queue_size=10)
+
+
+
+
+
 
 model = GroundEstimatorNet(cfg).cuda()
 optimizer = optim.SGD(model.parameters(), lr=cfg.lr, momentum=0.9, weight_decay=0.0005)
@@ -122,8 +130,6 @@ def _shift_cloud(cloud, height):
 
 
 
-
-
 def get_target_gnd(cloud, sem_label):
     if cloud.shape[0] != sem_label.shape[0]:
         raise Exception('Points and label MisMatch')
@@ -151,9 +157,8 @@ def InferGround(cloud):
     return output
 
 
-# visualize = False
-visualize = True
-# if visualize:
+
+# if args.visualize:
 #     plt.ion()
 #     fig = plt.figure()
 
@@ -186,9 +191,11 @@ def evaluate_SemanticKITTI(data_dir):
         pred_GndSeg = segment_cloud(points.copy(),np.asarray(cfg.grid_range), cfg.voxel_size[0], elevation_map = pred_gnd.T, threshold = 0.2)
         GndSeg = get_GndSeg(sem_label, GndClasses = [40, 44, 48, 49,60,72])
         
-        if visualize:
+        if args.visualize:
             np2ros_pub_2(points, pcl_pub, None, pred_GndSeg)
-            gnd_marker_pub(pred_gnd, marker_pub_2, cfg, color = "red")
+            if args.visualize_gnd:
+                gnd_marker_pub(pred_gnd, marker_pub_2, cfg, color = "red")
+            # pdb.set_trace()
 
         pred_GndSeg, GndSeg = remove_outliers(pred_GndSeg, GndSeg)
         intersection = np.logical_and(GndSeg, pred_GndSeg)
@@ -205,7 +212,7 @@ def evaluate_SemanticKITTI(data_dir):
 
 
         target_gnd, gnd_mask = get_target_gnd(points, sem_label)
-        # if visualize: 
+        # if args.visualize: 
             # fig.clear()
             # fig.add_subplot(1, 3, 1)
             # plt.imshow(gnd_mask, interpolation='nearest')
@@ -222,7 +229,6 @@ def evaluate_SemanticKITTI(data_dir):
         mse_score += mse
 
         print(f, iou, mse, prec, recall)
-        pdb.set_trace()
 
     iou_score = iou_score/len(frames)
     mse_score = mse_score/len(frames)
@@ -255,8 +261,7 @@ def main():
     else:
         raise Exception('please specify checkpoint to load')
 
-    data_dir = "/home/anshul/es3cap/semkitti_gndnet/kitti_semantic/dataset/sequences/07/"
-    evaluate_SemanticKITTI(data_dir)
+    evaluate_SemanticKITTI(args.data_dir)
 
 
 
