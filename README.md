@@ -68,17 +68,22 @@ To only visualize segmentation output without ground elevation remove the `-gnd`
 
 ## Results
 
-Sematic segmentation of point cloud ground (green) and non-ground (purple):
+Semantic segmentation of point cloud ground (green) and non-ground (purple):
 
 <img src="https://github.com/anshulpaigwar/GndNet/blob/master/doc/segmntation_results.png" alt="drawing" width="800"/>
 
 Ground elevation estimation:
+
 <img src="https://github.com/anshulpaigwar/GndNet/blob/master/doc/ground_estimation.png" alt="drawing" width="800"/>
 
+YouTube video (click on img):
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/kjZ-n_aIJAg/0.jpg)](https://www.youtube.com/watch?v=kjZ-n_aIJAg)
+
 ## TODO
-* Current dataloader loads the entire dataset in to the RAM first, this reduces training time but can be hogging for system with low RAM.
-* Speed up visualisation of ground elevation. Write C++ code for ros marker 
-* Create generalised ground elevation dataset with corespondence to SemanticKitti
+* Current dataloader loads the entire dataset into RAM first, this reduces training time but it can be hog systems with low RAM.
+* Speed up visualization of ground elevation. Write C++ code for ROS marker.
+* Create generalized ground elevation dataset to be with correspondence to SemanticKitti to be made public.
 
 
 ## Citation
