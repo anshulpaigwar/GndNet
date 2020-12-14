@@ -5,18 +5,18 @@ Authors: Anshul Paigwar, Ozgur Erkent, David Sierra Gonzalez, Christian Laugier
 Teaser Img
 
 ## Introduction
----
+
 This repository is code release for our paper accepted in International conference on Robotic Systems,IROS 2020. [presentation](https://sites.google.com/view/wad2019/overview).
 In this work, we study 3D object detection directly from point clouds obtained
 from 3D LiDARS.
 
 ## Abstract
----
+
 Ground plane estimation and ground point seg-mentation is a crucial precursor for many applications in robotics and intelligent vehicles like navigable space detection and occupancy grid generation, 3D object detection, point cloud matching for localization and registration for mapping. In this paper, we present GndNet, a novel end-to-end approach that estimates the ground plane elevation information in a grid-based representation and segments the ground points simultaneously in real-time. GndNet uses PointNet and Pillar Feature Encoding network to extract features and regresses ground height for each cell of the grid. We augment the SemanticKITTI dataset to train our network. We demonstrate qualitative and quantitative evaluation of our results for ground elevation estimation and semantic segmentation of point cloud. GndNet establishes a new state-of-the-art, achieves a run-time of 55Hz for ground plane estimation and ground point segmentation. 
 <img src="https://github.com/anshulpaigwar/GndNet/blob/master/doc/GndNet_architecture_final.png" alt="drawing" width="800"/>
 
 ## Installation
----
+
 We have tested the algorithm on the system with Ubuntu 18.04, 12 GB RAM and NVIDIA GTX-1080.
 
 ### Dependencies
@@ -36,7 +36,7 @@ ROS
 ros_numpy
 ```
 ## Data Preparation
----
+
 * We train our model on agumented SematicKITTI dataset [link](http://www.semantic-kitti.org/).
 * We subdivide object classes in SematicKITTI dataset in two categories 
 	1. Ground(road, sidewalk, parking, other-ground, vegetation, terrain)
@@ -92,7 +92,6 @@ Bool category car/ non-car
 For non-car category we keep a fixed x,y,z which is outside of 12m x 12m region. -->
 
 ## Training
----
 
 To train the model update the data directory path in the config file: config_kittiSem.yaml
 ```
@@ -118,7 +117,7 @@ Note: The current version of the code for visualisation is written in python whi
 To only visualize segmentation output without ground elevation remove the `-gnd` flag.
 
 ## Results
----
+
 
 
 ## TODO
@@ -128,7 +127,7 @@ To only visualize segmentation output without ground elevation remove the `-gnd`
 
 
 ## Citation
----
+
 If you find this project useful in your research, please consider cite:
 ```
 @inproceedings{paigwar2020gndnet,
@@ -140,11 +139,12 @@ If you find this project useful in your research, please consider cite:
 ```
 
 ## Contribution
----
+
 We Welcome you in contributing to this repo, and feel free to contact us for any potential bugs and issues.
 
 
 ## References
 ---
 [1] L. Rummelhard, A. Paigwar, A. Nègre and C. Laugier, "Ground estimation and point cloud segmentation using SpatioTemporal Conditional Random Field," 2017 IEEE Intelligent Vehicles Symposium (IV), Los Angeles, CA, 2017, pp. 1105-1110, doi: 10.1109/IVS.2017.7995861.
+
 [2] Behley, J., Garbade, M., Milioto, A., Quenzel, J., Behnke, S., Stachniss, C., & Gall, J. (2019). SemanticKITTI: A dataset for semantic scene understanding of lidar sequences. In Proceedings of the IEEE International Conference on Computer Vision (pp. 9297-9307).
