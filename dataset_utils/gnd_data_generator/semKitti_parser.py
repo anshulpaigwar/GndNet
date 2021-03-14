@@ -146,7 +146,7 @@ def parse_semanticKitti(data_dir):
     rospy.init_node('gnd_data_provider', anonymous=True)
     pcl_pub = rospy.Publisher("/kitti/velo/pointcloud", PointCloud2, queue_size=10)
     pcl_pub2 = rospy.Publisher("/kitti/raw/pointcloud", PointCloud2, queue_size=10)
-    marker_pub = rospy.Publisher("/kitti/ground_marker", Marker, queue_size=10)
+
     velodyne_dir = data_dir + "velodyne/"
     label_dir = data_dir + 'labels/'
     frames = os.listdir(velodyne_dir)
@@ -167,6 +167,8 @@ def parse_semanticKitti(data_dir):
         label = np.expand_dims(label, axis = 1)
         points = np.concatenate((points,label), axis = 1)
 
+
+        ##### Data Augmentation:
         if angle > 5.0:
             increase = False
         elif angle < -5.0:
@@ -178,13 +180,9 @@ def parse_semanticKitti(data_dir):
         else:
             angle -=0.1
 
+        points  = rotate_cloud(points, theta = [0,angle,angle]) #zyx
 
-        points  = rotate_cloud(points, theta = [0,5,angle]) #zyx
-
-        gnd_points, obs_points = segment_cloud(cloud,[40, 44, 48, 49,60,72])
-
-        # points += np.array([0,0,1.732,0,0], dtype=np.float32)
-        # points[0,2] += 1.732
+        gnd_points, obs_points = segment_cloud(points.copy(),[40, 44, 48, 49,60,72])
         
         timestamp = rospy.Time.now()
         broadcast_TF(poses[f],timestamp)

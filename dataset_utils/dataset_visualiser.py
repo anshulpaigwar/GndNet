@@ -187,7 +187,6 @@ def visualize_data(data_dir):
 
 
 if __name__ == '__main__':
-	# data_dir = '/home/anshul/es3cap/dataset/kitti_gnd_dataset_v2/training/seq_001'
-	data_dir = '/home/anshul/es3cap/dataset/kitti_sem_gnd_v2/training/seq_006'
+	data_dir = '/home/anshul/es3cap/my_codes/GndNet/data/training/seq_006'
 	visualize_data(data_dir)
 

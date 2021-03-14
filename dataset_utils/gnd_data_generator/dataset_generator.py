@@ -48,8 +48,7 @@ pc_range = cfg.pc_range[:2] + cfg.pc_range[3:5] # select minmax xy
 grid_size = cfg.grid_range
 length = int(grid_size[2] - grid_size[0]) # x direction
 width = int(grid_size[3] - grid_size[1])	# y direction
-out_dir = '/home/anshul/es3cap/dataset/kitti_sem_gnd_v2/training/seq_010'
-# out_dir = '/home/anshul/es3cap/dataset/kitti_sem_gnd/training/seq_006'
+out_dir = '/home/anshul/es3cap/my_codes/GndNet/data/training/seq_006'
 
 
 # @jit(nopython=True)

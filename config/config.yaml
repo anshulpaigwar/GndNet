@@ -1,4 +1,4 @@
-data_dir: '/home/anshul/es3cap/dataset/kitti_gnd_dataset/'
+data_dir: '/home/anshul/es3cap/my_codes/GndNet/data'
 shift_cloud: false
 
 grid_range: [0, -30, 60, 30] 

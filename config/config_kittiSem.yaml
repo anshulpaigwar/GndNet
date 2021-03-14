@@ -1,5 +1,4 @@
-data_dir: '/home/anshul/es3cap/semkitti_gndnet/kitti_sem_gnd_v2/'
-# data_dir: '/home/anshul/es3cap/dataset/kitti_gnd_dataset_v2/'
+data_dir: '/home/anshul/es3cap/my_codes/GndNet/data/'
 shift_cloud: true
 lidar_height: 1.733
 num_points: 100000

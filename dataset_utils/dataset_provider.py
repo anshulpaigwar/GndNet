@@ -200,8 +200,7 @@ if __name__ == '__main__':
 	pcl_pub = rospy.Publisher("/kitti/reduced_velo", PointCloud2, queue_size=10)
 	marker_pub = rospy.Publisher("/kitti/gnd_marker", Marker, queue_size=10)
 	fig = plt.figure()
-	# data_dir = '/home/anshul/es3cap/dataset/kitti_gnd_dataset/'
-	data_dir = '/home/anshul/es3cap/dataset/kitti_sem_gnd/'
+	data_dir = '/home/anshul/es3cap/my_codes/GndNet/data/'
 	train_loader, valid_loader =  get_data_loaders(data_dir)
 	
 	for batch_idx, (data, labels) in enumerate(valid_loader):
