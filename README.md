@@ -77,9 +77,8 @@ Ground elevation estimation:
 <img src="https://github.com/anshulpaigwar/GndNet/blob/master/doc/ground_estimation.png" alt="drawing" width="800"/>
 
 YouTube video (click on the imgs):
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/W_jXU-ewJR0&t/0.jpg)](https://www.youtube.com/watch?v=W_jXU-ewJR0&t)
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/kjZ-n_aIJAg/0.jpg)](https://www.youtube.com/watch?v=kjZ-n_aIJAg)
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/W_jXU-ewJR0/0.jpg)](https://www.youtube.com/watch?v=W_jXU-ewJR0&t) [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/kjZ-n_aIJAg/0.jpg)](https://www.youtube.com/watch?v=kjZ-n_aIJAg)
 
 ## TODO
 * Current dataloader loads the entire dataset into RAM first, this reduces training time but it can be hog systems with low RAM.
