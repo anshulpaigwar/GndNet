@@ -34,18 +34,19 @@ ros_numpy
 ```
 ## Data Preparation
 
-We train our model using augmented [SematicKITTI](http://www.semantic-kitti.org/) dataset. A sample data is provide in this repository, while the full dataset can be downloaded from [link](https://archive.org/details/semantickitti-gndnet-data). We use following procedure to generate our dataset:
-* We first crop the point cloud within the range of (x, y) = [(-50, -50), (50, 50)] and apply incremental rotation [-10, 10] degrees about X and Y axis to generate data with varying slopes and uphills. (SemanticKITTI dataset is recorded with mostly flat terrain)
-* Agumented point cloud is stored as numpy file in the folder *reduced_velo*.
+We train our model using the augmented [SematicKITTI](http://www.semantic-kitti.org/) dataset. A sample data is provided in this repository, while the full dataset can be downloaded from [link](https://archive.org/details/semantickitti-gndnet-data). We use the following procedure to generate our dataset:
+* We first crop the point cloud within the range of (x, y) = [(-50, -50), (50, 50)] and apply incremental rotation [-10, 10] degrees about the X and Y axis to generate data with varying slopes and uphills. (SemanticKITTI dataset is recorded with mostly flat terrain)
+* Augmented point cloud is stored as a NumPy file in the folder *reduced_velo*.
 * To generate ground elevation labels we then use the CRF-based surface fitting method as described in [1].
 * We subdivide object classes in SematicKITTI dataset into two categories 
 	1. Ground (road, sidewalk, parking, other-ground, vegetation, terrain)
 	2. Non-ground (all other)
-* We filter out non-ground points from *reduced_velo* and use CRF-method [1] only with the ground points to generate elevation map.
-* Our ground elevation is represented as 2D grid with cell resolution 1m x 1m and of size (x, y) = [(-50, -50), (50, 50)], where values of each cell represent the local ground elevation.
-* Ground elevation map is stored as numpy file in gnd_labels folder.
-* Finally, GndNet uses gnd_labels and reduced_velo (consisting both ground and non-ground points) for training.
+* We filter out non-ground points from *reduced_velo* and use CRF-method [1] only with the ground points to generate an elevation map.
+* Our ground elevation is represented as a 2D grid with cell resolution 1m x 1m and of size (x, y) = [(-50, -50), (50, 50)], where values of each cell represent the local ground elevation.
+* Ground elevation map is stored as NumPy file in gnd_labels folder.
+* Finally, GndNet uses gnd_labels and reduced_velo (consisting of both ground and non-ground points) for training.
 
+If you find the dataset useful consider citing our work and for queries regarding the dataset please contact the authors. 
 
 ## Training
 
