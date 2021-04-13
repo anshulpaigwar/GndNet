@@ -5,7 +5,7 @@ Authors: Anshul Paigwar, Ozgur Erkent, David Sierra Gonzalez, Christian Laugier
 
 ## Introduction
 
-This repository is code release for our GndNet paper accepted in International conference on Robotic Systems, IROS 2020.
+This repository is code release for our GndNet paper accepted in International conference on Robotic Systems, IROS 2020. [Link](https://hal.inria.fr/hal-02927350/document)
 
 ## Abstract
 
