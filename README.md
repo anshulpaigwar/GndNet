@@ -34,14 +34,18 @@ ros_numpy
 ```
 ## Data Preparation
 
-* We train our model on augmented SematicKITTI dataset [link](http://www.semantic-kitti.org/).
+We train our model using augmented [SematicKITTI](http://www.semantic-kitti.org/) dataset. A sample data is provide in this repository, while the full dataset can be downloaded from [link](https://archive.org/details/semantickitti-gndnet-data). We use following procedure to generate our dataset:
+* We first crop the point cloud within the range of (x, y) = [(-50, -50), (50, 50)] and apply incremental rotation [-10, 10] degrees about X and Y axis to generate data with varying slopes and uphills. (SemanticKITTI dataset is recorded with mostly flat terrain)
+* Agumented point cloud is stored as numpy file in the folder *reduced_velo*.
+* To generate ground elevation labels we then use the CRF-based surface fitting method as described in [1].
 * We subdivide object classes in SematicKITTI dataset into two categories 
 	1. Ground (road, sidewalk, parking, other-ground, vegetation, terrain)
 	2. Non-ground (all other)
-* To prepare our ground elevation dataset we take only ground points and use the CRF-based surface fitting method described in [1].
-* Ground labels are generated in a 2D grid representation with cell resolution 1m x 1m and of size (x, y) = [(-50, -50), (50, 50)]. Values of each cell represent the local ground elevation.
-* We store ground labels and raw point clouds (both ground and non-ground points) to train our network.
-* We provide a sample dataset in this repository, the full dataset can be made available on request.
+* We filter out non-ground points from *reduced_velo* and use CRF-method [1] only with the ground points to generate elevation map.
+* Our ground elevation is represented as 2D grid with cell resolution 1m x 1m and of size (x, y) = [(-50, -50), (50, 50)], where values of each cell represent the local ground elevation.
+* Ground elevation map is stored as numpy file in gnd_labels folder.
+* Finally, GndNet uses gnd_labels and reduced_velo (consisting both ground and non-ground points) for training.
+
 
 ## Training
 
