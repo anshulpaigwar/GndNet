@@ -24,7 +24,8 @@ import numpy as np
 # from modules import gnd_est_Loss
 from model import GroundEstimatorNet
 from utils.point_cloud_ops import points_to_voxel
-from utils.utils import cloud_msg_to_numpy,np2ros_pub_2, gnd_marker_pub, segment_cloud
+from utils.utils import cloud_msg_to_numpy, segment_cloud
+from utils.ros_utils import np2ros_pub_2, gnd_marker_pub
 import ipdb as pdb
 
 # Ros Includes
